@@ -17,7 +17,7 @@ const conectarDB = async () => {
     });
     console.log('DB conectada');
   } catch (error) {
-    console.log('Hubo un error al conectar a la BD');
+    console.log('Hubo un gran error al conectar a la BD');
     console.log(error);
     process.exit(1);
   }
