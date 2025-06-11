@@ -6,6 +6,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const conectarDB = async () => {
+    console.log('Valor de DB_MONGO:', process.env.DB_MONGO);
+    console.log('Todas las variables disponibles:');
+    console.log(process.env);
   try {
     console.log('Conectando a MongoDB con URI:', process.env.DB_MONGO);
     await mongoose.connect(process.env.DB_MONGO, {
