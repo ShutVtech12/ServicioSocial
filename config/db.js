@@ -7,6 +7,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const conectarDB = async () => {
     console.log('Entorno completo:', process.env);
+    console.log("------------------------------------------------------")
     console.log('DB_MONGO:', process.env.DB_MONGO);
   try {
     const URI = process.env.DB_MONGO;
