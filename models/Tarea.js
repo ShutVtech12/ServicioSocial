@@ -11,10 +11,9 @@ const TareaSchema = mongoose.Schema({
         required: true,
         trim: true
     },
-    fechaCreado: {
+    fechaInicio: {
         type: Date,
-        required: true,
-        default: Date.now()
+        required: true
     },
     fechaFinal: {
         type: Date,

@@ -28,7 +28,7 @@ const resolvers = {
             const grupos = await Grupo.find({ profesora: ctx.usuario.id })
             return grupos
         },
-        obtenerTodosGrupos: async (_, {}, ctx) => {
+        obtenerTodosGrupos: async (_, { }, ctx) => {
             const grupos = await Grupo.find()
             return grupos
         },
@@ -36,33 +36,46 @@ const resolvers = {
             const tareas = await Tarea.find({ creador: ctx.usuario.id }).where('grupoPertenece').equals(input.grupoPertenece)
             return tareas
         },
-        obtenerTodasTareas: async(_, { }, ctx) => {
+        obtenerTodasTareas: async (_, { }, ctx) => {
             const tareas = await Tarea.find({ creador: ctx.usuario.id })
+            console.log(tareas)
             return tareas
         },
-        obtenerAlumnosGrupo: async(_, { input }, ctx) => {
+        obtenerAlumnosGrupo: async (_, { input }, ctx) => {
             const alumnos = await Alumno.where('grupo').equals(input.grupoPertenece)
             return alumnos
         },
-        obtenerAlumnos: async(_, { input }, ctx) => {
+        obtenerAlumnos: async (_, { input }, ctx) => {
             const alumnos = await Alumno.where('grupo').equals(input.grupoPertenece)
             return alumnos
         },
-        obtenerTareasAlumno: async(_, {}, ctx) => {
+        obtenerTareasAlumno: async (_, { }, ctx) => {
             const tareas = await Tarea.where('grupoPertenece').equals(ctx.usuario.grupo)
             return tareas
         },
-        obtenerInfoAlumno: async(_, {}, ctx) => {
+        obtenerInfoAlumno: async (_, { }, ctx) => {
             const alumno = await Alumno.where('grupo').equals(ctx.usuario.grupo)
+            console.log(alumno)
             return alumno
         },
-        obtenerArchivo: async(_, {}, ctx) => {
-            const archivo = await Archivo.find({autor: ctx.usuario.id}).where('estado').equals(true)
+        obtenerInfoSoloAlumno: async (_, { }, ctx) => {
+            const alumno = await Alumno.findOne({ _id: ctx.usuario.id });
+            return alumno
+        },
+        obtenerArchivo: async (_, { }, ctx) => {
+            const archivo = await Archivo.find({ autor: ctx.usuario.id }).where('estado').equals(true)
             return archivo
         },
-        obtenerArchivoAlumnos: async(_, {input}, ctx) => {
+        obtenerArchivoAlumnos: async (_, { input }, ctx) => {
             const archivo = await Archivo.where('tareaAsignada').equals(input.tareaAsignada)
             return archivo
+        },
+        obtenerArchivosAlumno: async (_, { input }, ctx) => {
+            const archivos = await Archivo.find({
+                autor: input.autor,
+                tareaAsignada: input.tareaAsignada
+            });
+            return archivos;
         }
 
     },

@@ -26,7 +26,7 @@ const typeDefs = gql`
         id: ID
         titulo: String
         descripcion: String
-        fechaCreado: String
+        fechaInicio: String
         fechaFinal: String
         repetible: String
         diasRepetible: String
@@ -58,8 +58,15 @@ const typeDefs = gql`
         obtenerAlumnos(input: GrupoIDInput): [AlumnoFin]
         obtenerTareasAlumno: [Tarea]
         obtenerInfoAlumno: [AlumnoFin]
+        obtenerInfoSoloAlumno: AlumnoFin
         obtenerArchivo: [Archivo]
         obtenerArchivoAlumnos(input: TareaIDInput): [Archivo]
+        obtenerArchivosAlumno(input: AlumnoIDInput): [Archivo]
+    }
+
+    input AlumnoIDInput{
+        autor: String!
+        tareaAsignada: String!
     }
 
     input TareaIDInput{
@@ -89,6 +96,7 @@ const typeDefs = gql`
     input TareaInput{
         titulo: String!
         descripcion: String!
+        fechaInicio: String!
         fechaFinal: String!
         repetible: String!
         diasRepetible: String!
