@@ -7,6 +7,7 @@ const typeDefs = gql`
     }
 
     type Grupo {
+        clave: String
         grupo: String
         nombre: String
         id: ID
@@ -89,6 +90,7 @@ const typeDefs = gql`
     }
 
     input GrupoInput{
+        clave: String!
         grupo: String!
         nombre: String! 
     }

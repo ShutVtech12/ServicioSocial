@@ -1,11 +1,16 @@
 const mongoose = require('mongoose')
 
 const GrupoSchema = mongoose.Schema({
+    clave: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true,
+    },
     grupo: {
         type: String,
         required: true,
         trim: true,
-        unique: true
     },
     nombre: {
         type: String,
