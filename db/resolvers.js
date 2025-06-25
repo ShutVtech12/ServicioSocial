@@ -38,8 +38,11 @@ const resolvers = {
         },
         obtenerTodasTareas: async (_, { }, ctx) => {
             const tareas = await Tarea.find({ creador: ctx.usuario.id })
-            console.log(tareas)
             return tareas
+        },
+        obtenerTareaArchivo: async (_, {input}, ctx) => {
+            const tarea = await Tarea.findOne({_id: input.tareaAsignada})
+            return tarea
         },
         obtenerAlumnosGrupo: async (_, { input }, ctx) => {
             const alumnos = await Alumno.where('grupo').equals(input.grupoPertenece)
@@ -212,6 +215,16 @@ const resolvers = {
             await Tarea.findOneAndDelete({ _id: id })
             return "Tarea Eliminada"
         },
+        eliminarGrupoTarea: async (_, { input }, ctx) => {
+            // input debe tener el campo grupoPertenece
+            // Opcional: puedes validar que el usuario sea la maestra del grupo si lo deseas
+            try {
+                const result = await Tarea.deleteMany({ grupoPertenece: input.grupoPertenece });
+                return `Se eliminaron ${result.deletedCount} tareas del grupo`;
+            } catch (error) {
+                throw new Error("Error al eliminar las tareas del grupo");
+            }
+        },
         crearAlumno: async (_, { input }) => {
             const { boleta, password } = input
             const existeAlumno = await Alumno.findOne({ boleta })
@@ -291,6 +304,16 @@ const resolvers = {
             //Eliminar
             await Archivo.findOneAndDelete({ _id: id })
             return "Archivo Eliminado"
+        },
+        eliminarTareaArchivo: async(_, {input}, ctx) => {
+            // input debe tener el campo tareaAsignada
+            // Opcional: puedes validar que el usuario sea la maestra del grupo si lo deseas
+            try {
+                const result = await Archivo.deleteMany({ tareaAsignada: input.tareaAsignada });
+                return `Se eliminaron ${result.deletedCount} tareas del grupo`;
+            } catch (error) {
+                throw new Error("Error al eliminar las tareas del grupo");
+            }
         },
         nuevaRacha: async (_, { input }, ctx) => {
             try {

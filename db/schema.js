@@ -55,6 +55,7 @@ const typeDefs = gql`
         obtenerTodosGrupos: [Grupo]
         obtenerTareas(input: GrupoIDInput): [Tarea]
         obtenerTodasTareas: [Tarea]
+        obtenerTareaArchivo(input: TareaIDInput): Tarea
         obtenerAlumnosGrupo(input: GrupoIDInput): [Alumno]
         obtenerAlumnos(input: GrupoIDInput): [AlumnoFin]
         obtenerTareasAlumno: [Tarea]
@@ -141,6 +142,7 @@ const typeDefs = gql`
         nuevaTarea(input: TareaInput): Tarea
         actualizarTarea(id: ID!, input: TareaInput): Tarea
         eliminarTarea(id: ID!): String
+        eliminarGrupoTarea(input: GrupoIDInput): String
 
         #Alumno
         crearAlumno(input: AlumnoInput): String
@@ -150,6 +152,7 @@ const typeDefs = gql`
         nuevoArchivo(input: ArchivoInput, estado: Boolean): Archivo
         actualizarArchivo(id: ID!, input: ArchivoInput): Archivo
         eliminarArchivo(id: ID!): String
+        eliminarTareaArchivo(input: TareaIDInput): String
 
         #Racha
         nuevaRacha(input: RachaInput): Racha
