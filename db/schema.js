@@ -41,6 +41,8 @@ const typeDefs = gql`
         estado: Boolean
         autor: String
         tareaAsignada: String
+        archivoUrl: String
+        tipoArchivo: String
     }
 
     type Racha{
@@ -121,6 +123,8 @@ const typeDefs = gql`
     input ArchivoInput{
         texto: String!
         tareaAsignada: String!
+        archivoUrl: String!
+        tipoArchivo: String!
     }
 
     input RachaInput{
