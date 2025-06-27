@@ -40,8 +40,8 @@ const resolvers = {
             const tareas = await Tarea.find({ creador: ctx.usuario.id })
             return tareas
         },
-        obtenerTareaArchivo: async (_, {input}, ctx) => {
-            const tarea = await Tarea.findOne({_id: input.tareaAsignada})
+        obtenerTareaArchivo: async (_, { input }, ctx) => {
+            const tarea = await Tarea.findOne({ _id: input.tareaAsignada })
             return tarea
         },
         obtenerAlumnosGrupo: async (_, { input }, ctx) => {
@@ -216,13 +216,21 @@ const resolvers = {
             return "Tarea Eliminada"
         },
         eliminarGrupoTarea: async (_, { input }, ctx) => {
-            // input debe tener el campo grupoPertenece
-            // Opcional: puedes validar que el usuario sea la maestra del grupo si lo deseas
             try {
+                const alumno = await Alumno.deleteMany({grupo: input.grupoPertenece})
+                // 1. Busca todas las tareas del grupo
+                const tareas = await Tarea.find({ grupoPertenece: input.grupoPertenece });
+                const tareasIds = tareas.map(t => t._id);
+
+                // 2. Elimina todos los archivos relacionados con esas tareas
+                await Archivo.deleteMany({ tareaAsignada: { $in: tareasIds } });
+
+                // 3. Elimina todas las tareas del grupo
                 const result = await Tarea.deleteMany({ grupoPertenece: input.grupoPertenece });
-                return `Se eliminaron ${result.deletedCount} tareas del grupo`;
+
+                return `Se eliminaron ${result.deletedCount} tareas y sus archivos del grupo`;
             } catch (error) {
-                throw new Error("Error al eliminar las tareas del grupo");
+                throw new Error("Error al eliminar las tareas y archivos del grupo");
             }
         },
         crearAlumno: async (_, { input }) => {
@@ -305,7 +313,7 @@ const resolvers = {
             await Archivo.findOneAndDelete({ _id: id })
             return "Archivo Eliminado"
         },
-        eliminarTareaArchivo: async(_, {input}, ctx) => {
+        eliminarTareaArchivo: async (_, { input }, ctx) => {
             // input debe tener el campo tareaAsignada
             // Opcional: puedes validar que el usuario sea la maestra del grupo si lo deseas
             try {
