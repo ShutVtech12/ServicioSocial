@@ -79,8 +79,11 @@ const resolvers = {
                 tareaAsignada: input.tareaAsignada
             });
             return archivos;
+        },
+        obtenerRacha: async (_, { }, ctx) => {
+            const racha = await Racha.findOne({ autor: ctx.usuario.id });
+            return racha; // Devuelve null si no hay racha, o el objeto si sí hay
         }
-
     },
     Mutation: {
         //El primero es el root.
@@ -217,15 +220,22 @@ const resolvers = {
         },
         eliminarGrupoTarea: async (_, { input }, ctx) => {
             try {
-                const alumno = await Alumno.deleteMany({grupo: input.grupoPertenece})
-                // 1. Busca todas las tareas del grupo
+                // 1. Busca todos los alumnos del grupo (antes de eliminarlos)
+                const alumnos = await Alumno.find({ grupo: input.grupoPertenece });
+                const alumnosIds = alumnos.map(a => a._id);
+
+                // 2. Elimina todas las rachas de esos alumnos
+                await Racha.deleteMany({ autor: { $in: alumnosIds } });
+                // 3. Elimina todos los alumnos del grupo
+                const alumno = await Alumno.deleteMany({ grupo: input.grupoPertenece })
+                // 4. Busca todas las tareas del grupo
                 const tareas = await Tarea.find({ grupoPertenece: input.grupoPertenece });
                 const tareasIds = tareas.map(t => t._id);
 
-                // 2. Elimina todos los archivos relacionados con esas tareas
+                // 5. Elimina todos los archivos relacionados con esas tareas
                 await Archivo.deleteMany({ tareaAsignada: { $in: tareasIds } });
 
-                // 3. Elimina todas las tareas del grupo
+                // 6. Elimina todas las tareas del grupo
                 const result = await Tarea.deleteMany({ grupoPertenece: input.grupoPertenece });
 
                 return `Se eliminaron ${result.deletedCount} tareas y sus archivos del grupo`;
@@ -348,7 +358,21 @@ const resolvers = {
             //Guardar y retornar la tarea
             racha = await Racha.findOneAndUpdate({ _id: id }, input)
             return racha
-        }
+        },
+        eliminarRacha: async (_, { id }, ctx) => {
+            //Revisar si el grupo existe
+            let racha = await Racha.findById(id);
+            if (!racha) {
+                throw new Error("Racha no encontrado");
+            }
+            //Revisar que si la persona lo edita es el creador
+            if (racha.autor.toString() !== ctx.usuario.id) {
+                throw new Error("No tienes las credenciales");
+            }
+            //Eliminar
+            await Racha.findOneAndDelete({ _id: id })
+            return "Racha Eliminado"
+        },
     }
 }
 

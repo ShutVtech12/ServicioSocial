@@ -1,16 +1,16 @@
 const mongoose = require('mongoose')
 
 const RachaSchema = mongoose.Schema({
-    diasConse: {
+    titulo: {
         type: String,
         required: true
     },
     fechaInicio: {
         type: Date,
-        default: Date.now()
+        required: true
     },
-    lastUpdate: {
-        type: Date,
+    diasConse: {
+        type: String,
         required: true
     },
     autor: {
@@ -18,3 +18,5 @@ const RachaSchema = mongoose.Schema({
         ref: 'Alumno'
     }
 })
+
+module.exports = mongoose.model('Racha', RachaSchema)

@@ -47,8 +47,9 @@ const typeDefs = gql`
 
     type Racha{
         id: ID
+        titulo: String
         fechaInicio: String
-        lastUpdate: String
+        diasConse: String
         autor: String
     }
 
@@ -66,6 +67,7 @@ const typeDefs = gql`
         obtenerArchivo: [Archivo]
         obtenerArchivoAlumnos(input: TareaIDInput): [Archivo]
         obtenerArchivosAlumno(input: AlumnoIDInput): [Archivo]
+        obtenerRacha: Racha
     }
 
     input AlumnoIDInput{
@@ -128,8 +130,9 @@ const typeDefs = gql`
     }
 
     input RachaInput{
+        titulo: String!
+        fechaInicio: String!
         diasConse: String!
-        lastUpdate: String!
     }
 
     type Mutation {
@@ -160,7 +163,8 @@ const typeDefs = gql`
 
         #Racha
         nuevaRacha(input: RachaInput): Racha
-        actualizarRacha(input: RachaInput): Racha
+        actualizarRacha(id: ID!, input: RachaInput): Racha
+        eliminarRacha(id: ID!): String
     }
 
 `
