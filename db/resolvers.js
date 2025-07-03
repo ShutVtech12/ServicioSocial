@@ -356,6 +356,7 @@ const resolvers = {
                 throw new Error("No tienes las credenciales");
             }
             //Guardar y retornar la tarea
+            //git branch -M main
             racha = await Racha.findOneAndUpdate({ _id: id }, input)
             return racha
         },
