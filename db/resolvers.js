@@ -4,6 +4,7 @@ const Tarea = require('../models/Tarea')
 const Archivo = require('../models/Archivo')
 const Grupo = require('../models/Grupo')
 const Racha = require('../models/Racha')
+const Testing = require('.../models/Testing')
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 require('dotenv').config({ path: 'variables.env' })
@@ -86,7 +87,7 @@ const resolvers = {
         },
         obtenerTesting: async (_, { }, ctx) => {
             const doc = await Testing.findOne();
-            return doc // Devuelve null si no hay racha, o el objeto si sí hay
+            return doc 
         }
     },
     Mutation: {
