@@ -53,6 +53,11 @@ const typeDefs = gql`
         autor: String
     }
 
+    type Testing{
+        id: ID
+        version: String
+    }
+
     type Query{
         obtenerGrupos: [Grupo]
         obtenerTodosGrupos: [Grupo]
@@ -68,6 +73,7 @@ const typeDefs = gql`
         obtenerArchivoAlumnos(input: TareaIDInput): [Archivo]
         obtenerArchivosAlumno(input: AlumnoIDInput): [Archivo]
         obtenerRacha: Racha
+        obtenerTesting: Testing
     }
 
     input AlumnoIDInput{
