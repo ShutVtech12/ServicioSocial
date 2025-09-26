@@ -85,9 +85,10 @@ const resolvers = {
             const racha = await Racha.findOne({ autor: ctx.usuario.id });
             return racha; // Devuelve null si no hay racha, o el objeto si sí hay
         },
-        obtenerTesting: async (_, { }, ctx) => {
-            const doc = await Testing.findOne();
-            return doc 
+        obtenerTesting: async () => {
+            const doc = await Testing.find();
+            const docs = doc[0];
+            return docs;
         }
     },
     Mutation: {
