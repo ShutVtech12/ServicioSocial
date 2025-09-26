@@ -86,9 +86,9 @@ const resolvers = {
             return racha; // Devuelve null si no hay racha, o el objeto si sí hay
         },
         obtenerTesting: async () => {
-            const doc = await Testing.find();
-            const docs = doc[0];
-            return docs;
+            const doc = await Testing.findOne();
+            if (!doc) return null; // Si no hay documento, regresa null
+            return { id: doc._id, version: doc.version }; // Asegura que regresa el campo version
         }
     },
     Mutation: {
