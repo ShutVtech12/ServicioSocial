@@ -86,7 +86,7 @@ const resolvers = {
         },
         obtenerTesting: async (_, { }, ctx) => {
             const doc = await Testing.findOne();
-            return doc ? doc.version : null; // Devuelve null si no hay racha, o el objeto si sí hay
+            return doc // Devuelve null si no hay racha, o el objeto si sí hay
         }
     },
     Mutation: {
