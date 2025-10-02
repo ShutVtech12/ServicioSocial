@@ -290,14 +290,16 @@ const resolvers = {
         },
         nuevoArchivo: async (_, { input, estado }, ctx) => {
             try {
-                const archivo = new Archivo(input)
-                archivo.autor = ctx.usuario.id
-                archivo.estado = estado
-                //Almacenamos
-                const resultado = await archivo.save()
-                return resultado
+                const archivo = new Archivo({
+                    ...input,
+                    autor: ctx.usuario.id,
+                    estado: estado,
+                    fechaEntregado: new Date().toISOString() // <-- Asigna la fecha actual en formato UTC
+                });
+                const resultado = await archivo.save();
+                return resultado;
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         },
         actualizarArchivo: async (_, { id, input }, ctx) => {
