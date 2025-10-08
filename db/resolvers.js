@@ -59,7 +59,7 @@ const resolvers = {
         },
         obtenerInfoAlumno: async (_, { }, ctx) => {
             const alumno = await Alumno.where('grupo').equals(ctx.usuario.grupo)
-            console.log(alumno)
+            //console.log(alumno)
             return alumno
         },
         obtenerInfoSoloAlumno: async (_, { }, ctx) => {
@@ -99,7 +99,7 @@ const resolvers = {
         crearMaestra: async (_, { input }) => {
             const { correo, password } = input
             const existeMaestra = await Maestra.findOne({ correo })
-            console.log(existeMaestra)
+            //console.log(existeMaestra)
             if (existeMaestra) {
                 throw new Error('Esos datos ya estan registrados')
             }
@@ -107,7 +107,7 @@ const resolvers = {
                 //Hashear password
                 const salt = await bcryptjs.genSalt(10)
                 input.password = await bcryptjs.hash(password, salt)
-                console.log(input)
+                //console.log(input)
                 //Registra nuevo maestra
                 const nuevaMaestra = new Maestra(input)
                 //Ya se guarda el maestra
@@ -126,7 +126,7 @@ const resolvers = {
             }
             //Si el password es correcto
             const passwordCorrecto = await bcryptjs.compare(password, existeMaestra.password)
-            console.log('Password correcto')
+            //console.log('Password correcto')
             if (!passwordCorrecto) {
                 throw new Error('Password incorrecto')
             }
@@ -252,7 +252,7 @@ const resolvers = {
         crearAlumno: async (_, { input }) => {
             const { boleta, password } = input
             const existeAlumno = await Alumno.findOne({ boleta })
-            console.log(existeAlumno)
+            //console.log(existeAlumno)
             if (existeAlumno) {
                 throw new Error('Alumno ya registrado')
             }
@@ -260,7 +260,7 @@ const resolvers = {
                 //Hashear password
                 const salt = await bcryptjs.genSalt(10)
                 input.password = await bcryptjs.hash(password, salt)
-                console.log(input)
+                //console.log(input)
                 //Registra nuevo alumno
                 const nuevaAlumno = new Alumno(input)
                 //Ya se guarda el maestra
@@ -279,7 +279,7 @@ const resolvers = {
             }
             //Si el password es correcto
             const passwordCorrecto = await bcryptjs.compare(password, existeAlumno.password)
-            console.log('Password correcto')
+            //console.log('Password correcto')
             if (!passwordCorrecto) {
                 throw new Error('Password incorrecto')
             }
