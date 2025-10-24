@@ -289,17 +289,57 @@ const resolvers = {
             }
         },
         nuevoArchivo: async (_, { input, estado }, ctx) => {
+            // 1. Obtener la fecha de hoy en UTC (ignorando la hora)
+            const today = new Date();
+            // Crea una fecha que representa el inicio del día (medianoche) en UTC.
+            // Esto es crucial para la comparación "por día".
+            const startOfTodayUTC = new Date(Date.UTC(
+                today.getUTCFullYear(),
+                today.getUTCMonth(),
+                today.getUTCDate()
+            ));
+
+            // Crea una fecha que representa el final del día (medianoche del día siguiente) en UTC.
+            const endOfTodayUTC = new Date(startOfTodayUTC.getTime() + (1000 * 60 * 60 * 24));
+
+            // Si necesitas validar las restricciones de la tarea (repetible, fechas de inicio/fin), 
+            // primero deberías cargar el objeto Tarea, pero nos enfocaremos en la restricción "por día"
+            // aquí.
+
             try {
+                // 2. Buscar si el usuario ya entregó esta tarea hoy (en UTC)
+                const archivoExistente = await Archivo.findOne({
+                    autor: ctx.usuario.id, // ID del usuario actual
+                    tareaAsignada: input.tareaAsignada, // ID de la tarea a entregar
+                    fechaEntregado: {
+                        $gte: startOfTodayUTC.toISOString(), // Mayor o igual a la medianoche UTC de hoy
+                        $lt: endOfTodayUTC.toISOString()    // Menor que la medianoche UTC de mañana
+                    }
+                });
+
+                if (archivoExistente) {
+                    // 3. Si se encuentra un archivo, la entrega es inválida.
+                    // Es importante que el backend devuelva un error significativo.
+                    throw new Error("Ya has entregado esta tarea hoy. Solo se permite una entrega por día.");
+                }
+
+                // 4. Si no existe, permite la entrega y guarda el registro.
                 const archivo = new Archivo({
                     ...input,
                     autor: ctx.usuario.id,
                     estado: estado,
-                    fechaEntregado: new Date().toISOString() // <-- Asigna la fecha actual en formato UTC
+                    // Guardar la fecha y hora exacta de la entrega en UTC
+                    fechaEntregado: new Date().toISOString()
                 });
+
                 const resultado = await archivo.save();
                 return resultado;
+
             } catch (error) {
-                console.log(error);
+                console.error(error);
+                // Devuelve el error para que el frontend pueda manejarlo.
+                // En Apollo Server, es común usar throw.
+                throw error;
             }
         },
         actualizarArchivo: async (_, { id, input }, ctx) => {
