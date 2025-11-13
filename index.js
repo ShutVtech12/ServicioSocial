@@ -1,6 +1,7 @@
-const { ApolloServer } = require('apollo-server-express'); // 🚨 CAMBIO CLAVE: Usar apollo-server-express
-const express = require('express'); // 🚨 Necesitas importar express
-const graphqlUploadExpress = require('graphql-upload/graphqlUploadExpress.js');
+const express = require('express'); // Necesitas Express
+const { ApolloServer } = require('apollo-server-express'); // Necesitas apollo-server-express
+// 🚨 CORRECCIÓN: Importar directamente la función middleware CommonJS
+const graphqlUploadExpress = require('graphql-upload/graphqlUploadExpress.js'); 
 
 const typeDefs = require('./db/schema')
 const resolvers = require('./db/resolvers')
@@ -8,11 +9,12 @@ const conectarDB = require('./config/db')
 const jwt = require('jsonwebtoken')
 const { Storage } = require('@google-cloud/storage');
 
-// 1. Cargar variables de entorno: Debe ir al inicio para que process.env esté disponible.
+// 1. Cargar variables de entorno
 require('dotenv').config({ path: 'variables.env' });
 
 const serviceKeyContent = process.env.GOOGLE_CREDENTIALS;
-const bucketName = 'tu-nombre-de-bucket-unico'; // ⬅️ REEMPLAZA con el nombre de tu Bucket de GCS
+const bucketName = 'tu-nombre-de-bucket-unico'; 
+
 
 // === CONFIGURACIÓN DE GOOGLE CLOUD STORAGE ===
 if (!serviceKeyContent) {
@@ -28,7 +30,6 @@ try {
     throw new Error('La variable de entorno de GCS no es un JSON válido.');
 }
 
-
 // 2. Inicializar el cliente de Storage
 const storage = new Storage({
     projectId: serviceAccount.project_id,
@@ -40,6 +41,7 @@ const storage = new Storage({
 const bucket = storage.bucket(bucketName);
 // =============================================
 
+
 // Conectar a la DB
 conectarDB();
 
@@ -47,10 +49,10 @@ conectarDB();
 const app = express();
 
 // 2. APLICAR EL MIDDLEWARE DE SUBIDA A EXPRESS
-// MaxFileSize configurado a 50MB
+// MaxFileSize configurado a 50MB (Recuerda que este valor debe ser suficiente para tus archivos)
 app.use(graphqlUploadExpress({ maxFileSize: 50000000, maxFiles: 1 })); 
 
-// 3. CONFIGURAR EL SERVIDOR APOLLO (usando apollo-server-express)
+// 3. CONFIGURAR EL SERVIDOR APOLLO 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -78,10 +80,13 @@ const server = new ApolloServer({
 async function startServer() {
     await server.start();
     
-    // Aplica Apollo Server como middleware de Express
-    server.applyMiddleware({ app });
+    // 🚨 CAMBIO CRUCIAL: Especificar la ruta /graphql explícitamente
+    server.applyMiddleware({ 
+        app,
+        path: '/graphql' 
+    });
 
-    // 5. ESCUCHAR EL PUERTO CON EXPRESS (NO con el método .listen de Apollo)
+    // 5. ESCUCHAR EL PUERTO CON EXPRESS 
     app.listen({ port: process.env.PORT || 4000 }, () => {
         console.log(`✅ Servidor listo en la URL http://localhost:${process.env.PORT || 4000}${server.graphqlPath}`);
     });
