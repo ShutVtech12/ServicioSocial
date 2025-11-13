@@ -1,6 +1,6 @@
 const { ApolloServer } = require('apollo-server-express'); // 🚨 CAMBIO CLAVE: Usar apollo-server-express
 const express = require('express'); // 🚨 Necesitas importar express
-const { graphqlUploadExpress } = require('graphql-upload');
+const graphqlUploadExpress = require('graphql-upload/graphqlUploadExpress.js');
 
 const typeDefs = require('./db/schema')
 const resolvers = require('./db/resolvers')
