@@ -22,41 +22,6 @@ const crearTokenMaestra = (maestra, secreta, expiresIn) => {
     return jwt.sign({ id, correo, nombre }, secreta, { expiresIn })
 }
 
-const uploadToGCS = (filePromise, bucket, userId) => {
-    return new Promise(async (resolve, reject) => {
-
-        // 1. Resolver el objeto promise del archivo
-        const { createReadStream, filename, mimetype } = await filePromise;
-        const fileStream = createReadStream();
-
-        // 2. Definir la ruta de destino dentro de GCS
-        // Usamos el ID del usuario para organizar (ej: tareas/u123/video_tarea.mp4)
-        const gcsPath = `tareas/${userId}/${filename}`;
-
-        // 3. Crear el objeto File en el bucket
-        const file = bucket.file(gcsPath);
-
-        // 4. Crear un Stream de Escritura
-        const writeStream = file.createWriteStream({
-            metadata: {
-                contentType: mimetype,
-                // Opcional: Asegura que el archivo sea público si lo configuraste así en el bucket
-                cacheControl: 'public, max-age=31536000',
-            },
-            public: true
-        });
-
-        // 5. Transferir el archivo: Pipe del Stream de Lectura al Stream de Escritura
-        fileStream.pipe(writeStream)
-            .on('error', (err) => reject(err)) // Error al subir
-            .on('finish', () => {
-                // Generar la URL pública una vez que la subida termina
-                const publicUrl = `https://storage.googleapis.com/${bucket.name}/${gcsPath}`;
-                resolve(publicUrl); // Devolver la URL para guardar en MongoDB
-            });
-    });
-};
-
 const resolvers = {
     Query: {
         //Todo lo que es obtener datos en Query
@@ -350,24 +315,6 @@ const resolvers = {
 
                 let archivoUrlFinal = input.archivoUrl || 'sin'; // Valor por defecto del texto de la tarea
                 let tipoArchivoFinal = input.tipoArchivo || 'sin';
-
-                if (archivo) {
-                    // El archivo binario existe, procedemos a subirlo usando la función auxiliar
-                    const { url, mimetype } = await uploadToGCS(archivo, ctx.bucket, ctx.usuario.id);
-
-                    archivoUrlFinal = url;
-
-                    // Determinar el tipo de archivo (video, audio, etc.)
-                    if (mimetype.startsWith('video')) {
-                        tipoArchivoFinal = 'video';
-                    } else if (mimetype.startsWith('image')) {
-                        tipoArchivoFinal = 'imagen';
-                    } else if (mimetype.startsWith('audio')) {
-                        tipoArchivoFinal = 'audio';
-                    } else {
-                        tipoArchivoFinal = 'otro';
-                    }
-                }
 
                 // --- 3. Guardar el Registro en MongoDB ---
 
