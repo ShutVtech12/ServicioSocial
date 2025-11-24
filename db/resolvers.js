@@ -185,14 +185,20 @@ const resolvers = {
             return "Grupo Eliminado"
         },
         nuevaTarea: async (_, { input }, ctx) => {
+            console.log('=== nuevaTarea called ===');
+            console.log('input:', input);
+            console.log('ctx.usuario:', ctx?.usuario);
+            if (!ctx || !ctx.usuario || !ctx.usuario.id) {
+                throw new Error('No autenticado. Token faltante o inválido.');
+            }
             try {
-                const tarea = new Tarea(input)
-                tarea.creador = ctx.usuario.id
-                //Almacenamos en la BD
-                const resultado = await tarea.save()
-                return resultado
+                const tarea = new Tarea(input);
+                tarea.creador = ctx.usuario.id;
+                const resultado = await tarea.save();
+                return resultado;
             } catch (error) {
-                console.log(error)
+                console.error('Error en nuevaTarea:', error);
+                throw new Error('Error al crear tarea: ' + (error.message || 'interno'));
             }
         },
         actualizarTarea: async (_, { id, input }, ctx) => {
